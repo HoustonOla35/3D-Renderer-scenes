@@ -22,6 +22,7 @@ Image* generateImage ()
     Renderer *renderer = new SkyRenderer(scene);
 
     scene->addObject(new Sphere(Vect(), R_TERRE, Material(Color(0x567d46)))); // Terre
+    scene->addLight(new Light(Vect(0, 0, 2*R_TERRE)));
 
     scene->camera()->setPos(Vect(0, 0, R_TERRE + 1));
     scene->camera()->setDir(Vect(1, 0, 0));
