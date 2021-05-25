@@ -36,7 +36,7 @@ Image* generateImage (const double theta)
     scene->camera()->setWidth(3*scene->camera()->width());
     scene->camera()->setHeight(3*scene->camera()->height());
 
-    scene->initRender();
+    scene->init();
 
     Image *image = scene->camera()->image(renderer);
 

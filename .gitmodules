@@ -1,6 +1,10 @@
 [submodule "spheres/renderer"]
 	path = spheres/renderer
 	url = https://github.com/AdrienVannson/3D-Renderer/
+[submodule "kdtree-optimization/renderer"]
+	path = kdtree-optimization/renderer
+	url = https://github.com/AdrienVannson/3D-Renderer/
+	
 [submodule "sky/renderer"]
 	path = sky/renderer
 	url = https://github.com/AdrienVannson/3D-Renderer/
