@@ -71,11 +71,11 @@ double SkyRenderer::intensity(const Ray &ray, const double wavelength)
 
         assert(endAtmosphere.collisionDate(Ray(M, m_toSun)) != INFINITY);
 
-        const double theta = (ray.dir() ^ m_toSun).norm();
+        const double cosTheta = ray.dir() * m_toSun;
 
         intensity += 8 * 2e5 * SUN_INTENSITY/N // TODO : ajust constant
                    * transmission(M + endAtmosphere.collisionDate(Ray(M, m_toSun)) * m_toSun, M, wavelength)
-                   * 3 / (16 * M_PI) * (1 + cos(theta)*cos(theta))
+                   * 3. / (16. * M_PI) * (1. + cosTheta*cosTheta)
                    * scattering(M, wavelength)
                    * transmission(M, ray.pos(), wavelength);
     }
