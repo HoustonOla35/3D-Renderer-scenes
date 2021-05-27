@@ -17,7 +17,8 @@ SkyRenderer::SkyRenderer(Scene *scene, Vect toSun) :
 SkyRenderer::~SkyRenderer()
 {}
 
-double rayleighScattering(const Vect M, const double wavelength)
+// Rayleigh scattering
+inline double betaR(const Vect M, const double wavelength)
 {
     double beta;
     if (wavelength == WAVELENGTH_BLUE) {
@@ -34,13 +35,14 @@ double rayleighScattering(const Vect M, const double wavelength)
     }
 
     const double h = M.norm() - EARTH_RADIUS;
-    return beta * exp(-h / H_0);
+    return beta * exp(-h / 8000.);
 }
 
-double mieScattering(const Vect M)
+// Mie scattering
+inline double betaM(const Vect M)
 {
     const double h = M.norm() - EARTH_RADIUS;
-    return 2.1e-6 * exp(-h / 1200);
+    return 2e-5 * exp(-h / 1200.);
 }
 
 // Transmission coefficient from A to B
@@ -53,8 +55,9 @@ double transmission(const Vect A, const Vect B, const double wavelength)
 
     const int N = 10;
     for (int i=0; i<N; i++) {
-        const double beta = rayleighScattering(A + ((double)i / N) * v, wavelength)
-                          + 1.1 * mieScattering(A + ((double)i / N) * v);
+        const Vect M = A + ((i + .5) / N) * v;
+
+        const double beta = betaR(M, wavelength) + 1.1*betaM(M);
         integrale += beta * (norm / N);
     }
 
@@ -63,25 +66,26 @@ double transmission(const Vect A, const Vect B, const double wavelength)
 
 double SkyRenderer::intensity(const Ray &ray, const double wavelength)
 {
-    Sphere endAtmosphere(Vect(), EARTH_RADIUS + 5*H_0);
+    Sphere endAtmosphere(Vect(), EARTH_RADIUS + 4*8000);
     const double t_max = endAtmosphere.collisionDate(ray);
 
     double intensity = 0;
 
     const int N = 10;
+    const double dt = t_max / N;
     for (int i=0; i<N; i++) {
-        const Vect M = ray.pos() + (i*t_max/N) * ray.dir();
-
-        assert(endAtmosphere.collisionDate(Ray(M, m_toSun)) != INFINITY);
-
+        const Vect M = ray.pos() + (i + .5)*dt * ray.dir();
         const double cosTheta = ray.dir() * m_toSun;
 
-        const double coefRayleigh = 3./(16.*M_PI)*(1. + cosTheta*cosTheta) * rayleighScattering(M, wavelength);
+        // Rayleigh
+        const double phaseR = 3. / (16.*M_PI) * (1. + cosTheta*cosTheta);
+        const double coefRayleigh = phaseR * betaR(M, wavelength);
 
-        const double mu = cosTheta;
+        // Mie
         const double g = 0.76;
-        const double phaseM = 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f));
-        const double coefMie = phaseM * mieScattering(M);
+        const double phaseM = (3. / (8.*M_PI) * (1. - g*g) * (1. + cosTheta*cosTheta))
+                            / ((2. + g*g) * pow(1. + g*g - 2.*g*cosTheta, 1.5));
+        const double coefMie = phaseM * betaM(M);
 
         intensity += 8. * 2e5 * SUN_INTENSITY/N // TODO : ajust constant
                    * transmission(M + endAtmosphere.collisionDate(Ray(M, m_toSun)) * m_toSun, M, wavelength)
