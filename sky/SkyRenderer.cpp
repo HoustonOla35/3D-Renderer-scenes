@@ -22,10 +22,10 @@ double scattering(const Vect M, const double wavelength)
 {
     double beta;
     if (wavelength == WAVELENGTH_BLUE) {
-        beta = 33.1e-6;
+        beta = 3.31e-5;
     }
     else if (wavelength == WAVELENGTH_GREEN) {
-        beta = 13.5e-6;
+        beta = 1.35e-5;
     }
     else if (wavelength == WAVELENGTH_RED) {
         beta = 5.8e-6;
