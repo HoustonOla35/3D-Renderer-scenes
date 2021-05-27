@@ -17,8 +17,7 @@ SkyRenderer::SkyRenderer(Scene *scene, Vect toSun) :
 SkyRenderer::~SkyRenderer()
 {}
 
-// Scattering coefficient at point M
-double scattering(const Vect M, const double wavelength)
+double rayleighScattering(const Vect M, const double wavelength)
 {
     double beta;
     if (wavelength == WAVELENGTH_BLUE) {
@@ -38,6 +37,12 @@ double scattering(const Vect M, const double wavelength)
     return beta * exp(-h / H_0);
 }
 
+double mieScattering(const Vect M)
+{
+    const double h = M.norm() - EARTH_RADIUS;
+    return 2.1e-6 * exp(-h / 1200);
+}
+
 // Transmission coefficient from A to B
 double transmission(const Vect A, const Vect B, const double wavelength)
 {
@@ -48,11 +53,9 @@ double transmission(const Vect A, const Vect B, const double wavelength)
 
     const int N = 10;
     for (int i=0; i<N; i++) {
-        integrale += scattering(A + ((double)i / N) * v, wavelength) * (norm / N);
-    }
-
-    if (isnan(exp(-integrale))) {
-        assert(false);
+        const double beta = rayleighScattering(A + ((double)i / N) * v, wavelength)
+                          + 1.1 * mieScattering(A + ((double)i / N) * v);
+        integrale += beta * (norm / N);
     }
 
     return exp(-integrale);
@@ -73,10 +76,16 @@ double SkyRenderer::intensity(const Ray &ray, const double wavelength)
 
         const double cosTheta = ray.dir() * m_toSun;
 
-        intensity += 8 * 2e5 * SUN_INTENSITY/N // TODO : ajust constant
+        const double coefRayleigh = 3./(16.*M_PI)*(1. + cosTheta*cosTheta) * rayleighScattering(M, wavelength);
+
+        const double mu = cosTheta;
+        const double g = 0.76;
+        const double phaseM = 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f));
+        const double coefMie = phaseM * mieScattering(M);
+
+        intensity += 8. * 2e5 * SUN_INTENSITY/N // TODO : ajust constant
                    * transmission(M + endAtmosphere.collisionDate(Ray(M, m_toSun)) * m_toSun, M, wavelength)
-                   * 3. / (16. * M_PI) * (1. + cosTheta*cosTheta)
-                   * scattering(M, wavelength)
+                   * (coefRayleigh + coefMie)
                    * transmission(M, ray.pos(), wavelength);
     }
 
