@@ -19,3 +19,13 @@ p {
 .splide__slide img {
   width: 100%;
 }
+
+.card .card-content h3 {
+  font-size: 20px;
+  font-weight: 300;
+
+  display: block;
+  line-height: 32px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+}

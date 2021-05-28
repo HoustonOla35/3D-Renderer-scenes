@@ -6,10 +6,10 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <link rel="stylesheet" href="styles.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body class="grey lighten-4">
 
@@ -31,7 +31,9 @@
         <div class="card">
           <div class="card-content">
             <span class="card-title">Introduction</span>
-
+            <p>
+              L'objectif de cette scène est de simuler d'une manière physiquement réaliste l'apparence du ciel sur Terre en journée et au coucher du soleil. Pour cela, on modélisera le trajet de la lumière venant du soleil à travers l'atmosphère en prenant en compte le fait que les rayons lumineux y sont atténués et déviés.
+            </p>
           </div>
         </div>
 
@@ -39,7 +41,7 @@
           <div class="card-content">
             <span class="card-title">Dispersion des rayons</span>
             <p>
-              On considèrera que lorsqu'un rayon traverse une couche d'atmosphère d'épaisseur \(\d{x}\), son intensité lumineuse est multipliée par \(1 - \beta^e \d{x}\) où \(\beta^e\) est le coefficient d'extinction du milieu.
+              On considère que lorsqu'un rayon traverse une couche d'atmosphère d'épaisseur \(\d{x}\), son intensité lumineuse est multipliée par \(1 - \beta^e \d{x}\) où \(\beta^e\) est le coefficient d'extinction du milieu.
             </p>
 
             <svg viewbox="-3 -3 306 106" version="1.1" xmlns="http://www.w3.org/2000/svg" class="responsive-img" shape-rendering="crispEdges">
@@ -69,7 +71,15 @@
               Ainsi, \( \ln\par{\frac{I(x_2)}{I(x_1)}} = -\int_{x_1}^{x_2} \beta^e(x)\d{x} \), donc \(I(x_2) = \exp\par{-\int_{x_1}^{x_2} \beta^e(x)\d{x}}\).<br/>
               En notant \(T(x_1, x_2) = \exp\par{-\int_{x_1}^{x_2} \beta^e(x)\d{x}}\) le coefficient de transmission du point d'abscisse \(x_1\) vers le point d'abscisse \(x_2\), on obtient finalement :
               \[ I(x_2) = T(x_1, x_2) I(x_1) \]
+              Cette formule permet d'évaluer numériquement l'intensité perdue par le rayon lorsque celui-ci traverse l'atmosphère.
             </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Déviation des rayons</span>
+
           </div>
         </div>
 
@@ -89,14 +99,79 @@
               \[-M \frac{P(h) S \d{h} g}{R T_0} - (P(h+dh) - P(h))S = 0\]
               Ainsi, \(\frac{Mg}{R T_0}P(h) + \frac{\d{P}}{\d{h}}(h) = 0\), donc \(P(h) = P_0 \exp\par{-\frac{Mg}{R T_0}h}\).
               Finalement : \[P(h) = P_0 \exp \par{-\frac{h}{h_0}} \text{ avec } h_0 = \frac{R T_0}{Mg} \approx 8000 \mathrm m\].
+              Ce calcul justifie la décroissance des coefficients \(\beta\) donnés dans la partie suivante.
             </p>
           </div>
         </div>
       </div>
 
       <!-- Colonne droite -->
-      <div class="wol s12 l6">
+      <div class="col s12 l6">
 
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Phénomènes de dispersion</span>
+            <p>Pour simuler la propagation des rayons lumineux dans le ciel, on prend en compte deux types de dispersion différents : la dispersion de Rayleigh et la dispersion de Mie</p>
+
+            <h3>Dispersion de Rayleigh</h3>
+            <p>La dispersion de Rayleigh dépend fortement de la longueur d'onde. Elle permet d'expliquer la couleur du ciel et celle des couchers de soleil.</p>
+            <ul class="browser-default">
+              <li>\(\beta_R^s(h,\lambda) = \frac{8 \pi^3 (n^2-1)^2}{3N\lambda^4} e^{-h/H_R}\)</li>
+              <li>\(\beta_R^e = \beta_R^s\)</li>
+              <li>\(P_R = \frac{3(1 + \cos(\theta))}{16 \pi}\)</li>
+            </ul>
+            <p>Pour calculer \(\beta_R^s(h,\lambda)\), on prend \(H_R = 8 \: \mathrm{km}\) et on utilise les valeurs tabulées suivantes :</p>
+            <table class="highlight">
+              <thead>
+                <tr>
+                  <th>Couleur</th>
+                  <th>Longueur d'onde \(\lambda\)</th>
+                  <th>Coefficient de dispersion \(\beta_R^s(h,\lambda)\)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Rouge</td>
+                  <td>680 nm</td>
+                  <td>\(5.8 \times 10^{-6} \: \mathrm{m}^{-1}\)</td>
+                </tr>
+                <tr>
+                  <td>Vert</td>
+                  <td>550 nm</td>
+                  <td>\(1.35 \times 10^{-5} \: \mathrm{m}^{-1}\)</td>
+                </tr>
+                <tr>
+                  <td>Bleu</td>
+                  <td>440 nm</td>
+                  <td>\(3.31 \times 10^{-5} \: \mathrm{m}^{-1}\)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Dispersion de Mie</h3>
+            La dispersion de Mie est causée par les petites particules en suspension dans l'air. Elle est responsable de la formation d'un halo autour du soleil.
+            <ul class="browser-default">
+              <li>\(\beta_R^s(h,\lambda) = \beta_R^s(0,\lambda) e^{-h/H_M}\)</li>
+              <li>\(\beta_M^e = 1.1 \times \beta_M^s\)</li>
+              <li>\(P_M = \frac{3}{8\pi} \times \frac{(1-g^2)(1+\cos^2\theta)}{(2+g^2)(1+g^2-2g\cos\theta)^\frac{3}{2}}\)</li>
+            </ul>
+            On prend \(\beta_R^s(0,\lambda) = 2.1 \times 10^{-5} \: \mathrm{m}^{-1}\), \(H_M = 1.2 \: \mathrm{km}\) et \(g = 0.76\).
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Résultats</span>
+            <p>Les images suivantes ont été obtenues avec la méthode décrite précédemment.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Références</span>
+            <p>Les formules physiques et les valeurs numériques utilisées sont principalement issues de l'article <em>Precomputed atmospheric scattering</em> de BRUNETON Eric et NEYRET Fabrice.</p>
+          </div>
+        </div>
       </div>
     </div>
   </main>
