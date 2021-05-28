@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+  <title>Couleurs du ciel - Moteur de rendu</title>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="grey lighten-4">
+
+  <header class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper teal">
+        <a href="#" class="brand-logo center">Moteur de rendu</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Couleurs du ciel</h1>
+
+    <div class="row">
+      <!-- Colonne gauche -->
+      <div class="col s12 l6">
+
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Introduction</span>
+
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Dispersion des rayons</span>
+            <p>
+              On considèrera que lorsqu'un rayon traverse une couche d'atmosphère d'épaisseur \(\d{x}\), son intensité lumineuse est multipliée par \(1 - \beta^e \d{x}\) où \(\beta^e\) est le coefficient d'extinction du milieu.
+            </p>
+
+            <svg viewbox="-3 -3 306 106" version="1.1" xmlns="http://www.w3.org/2000/svg" class="responsive-img" shape-rendering="crispEdges">
+              <!-- Pointe de flèche -->
+              <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2" markerHeight="2" orient="auto-start-reverse" stroke="red" fill="red">
+                <path d="M 0 0 L 10 5 L 0 10 z" />
+              </marker>
+
+              <rect x="60" y="0" width="180" height="90" stroke="black" fill="transparent" stroke-width="3"/>
+
+              <line x1="0" x2="60" y1="45" y2="45" stroke="red" stroke-width="5" marker-end="url(#arrow)"/>
+              <line x1="240" x2="300" y1="45" y2="45" stroke="red" stroke-width="5" marker-end="url(#arrow)"/>
+
+              <foreignObject x="0" y="0" width="200" height="200">
+                <div xmlns="http://www.w3.org/1999/xhtml">\(I_0\)</div>
+              </foreignObject>
+            </svg>
+
+            <p>
+              \(I = \ln(1 - \beta^e \d{x}) I_0\), donc \(\ln\par{\frac{I}{I_0}} = \ln(1 - \beta^e \d{x}) = -\beta^e \d{x}\).
+            </p>
+
+            <!-- Autre schéma -->
+
+            <p>
+              Lorsque le rayon traverse une portion longue, son intensité \(I\) est réduite par chaque couche d'épaisseur \(\d{x}\) : \( \ln\par{\frac{I(x+\d{x})}{I(x)}} = -\beta^e \d{x} \). <br/>
+              Ainsi, \( \ln\par{\frac{I(x_2)}{I(x_1)}} = -\int_{x_1}^{x_2} \beta^e(x)\d{x} \), donc \(I(x_2) = \exp\par{-\int_{x_1}^{x_2} \beta^e(x)\d{x}}\).<br/>
+              En notant \(T(x_1, x_2) = \exp\par{-\int_{x_1}^{x_2} \beta^e(x)\d{x}}\) le coefficient de transmission du point d'abscisse \(x_1\) vers le point d'abscisse \(x_2\), on obtient finalement :
+              \[ I(x_2) = T(x_1, x_2) I(x_1) \]
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Pression en fonction de l'altitude</span>
+            <p>
+              On cherche ici à calculer la pression \(P(h)\) de l'air à une altitude \(h\). On note \(P_0 = P(0)\) la pression au niveau de la mer, \(M\) la masse molaire de l'air, \(T_0 = 273 \mathrm K\) la température de l'air supposée constante, \(R\) la constante des gaz parfaits. On considère une couche d'air d'épaisseur \(\d{h}\) et de surface \(S\) en équilibre à une hauteur \(h\). On note \(m\) sa masse et \(n\) la quantité de matière qu'elle contient. D'après la loi des gaz parfaits, \(P S\d{h} = nRT_0\), donc \(m = Mn = M \frac{P(h) S\d{h}}{RT_0}\). La couche d'air est soumise à trois forces :
+            </p>
+            <ul class="browser-default">
+              <li class="browser-default">Le poids : \(\vec P = -mg \vec{u_z}\)</li>
+              <li class="browser-default">La pression venant du dessus : \(\vec{F_1} = -P(h+\d{h}) S \vec{u_z}\)</li>
+              <li class="browser-default">La pression venant du dessous : \(\vec{F_2} = P(h) S \vec{u_z}\)</li>
+            </ul>
+            <p>
+              Le principe fondamental de la statique assure que \(\vec P + \vec{F_1} + \vec{F_2} = \vec 0\), donc :
+              \[-M \frac{P(h) S \d{h} g}{R T_0} - (P(h+dh) - P(h))S = 0\]
+              Ainsi, \(\frac{Mg}{R T_0}P(h) + \frac{\d{P}}{\d{h}}(h) = 0\), donc \(P(h) = P_0 \exp\par{-\frac{Mg}{R T_0}h}\).
+              Finalement : \[P(h) = P_0 \exp \par{-\frac{h}{h_0}} \text{ avec } h_0 = \frac{R T_0}{Mg} \approx 8000 \mathrm m\].
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Colonne droite -->
+      <div class="wol s12 l6">
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="page-footer teal">
+    <div class="container"></div>
+    <div class="footer-copyright">
+      <div class="container"></div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
+</body>
+</html>
