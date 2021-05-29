@@ -87,7 +87,7 @@ double SkyRenderer::intensity(const Ray &ray, const double wavelength)
                             / ((2. + g*g) * pow(1. + g*g - 2.*g*cosTheta, 1.5));
         const double coefMie = phaseM * betaM(M);
 
-        intensity += 8. * 2e5 * SUN_INTENSITY/N // TODO : ajust constant
+        intensity += 6e8 / N
                    * transmission(M + endAtmosphere.collisionDate(Ray(M, m_toSun)) * m_toSun, M, wavelength)
                    * (coefRayleigh + coefMie)
                    * transmission(M, ray.pos(), wavelength);

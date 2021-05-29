@@ -9,6 +9,4 @@ const double WAVELENGTH_BLUE = 440;
 const double WAVELENGTH_GREEN = 550;
 const double WAVELENGTH_RED = 680;
 
-const double SUN_INTENSITY = 255;
-
 #endif // CONSTANTS_HPP
