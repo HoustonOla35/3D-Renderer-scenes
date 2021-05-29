@@ -44,27 +44,12 @@
               On considère que lorsqu'un rayon traverse une couche d'atmosphère d'épaisseur \(\d{x}\), son intensité lumineuse est multipliée par \(1 - \beta^e \d{x}\) où \(\beta^e\) est le coefficient d'extinction du milieu.
             </p>
 
-            <svg viewbox="-3 -3 306 106" version="1.1" xmlns="http://www.w3.org/2000/svg" class="responsive-img" shape-rendering="crispEdges">
-              <!-- Pointe de flèche -->
-              <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2" markerHeight="2" orient="auto-start-reverse" stroke="red" fill="red">
-                <path d="M 0 0 L 10 5 L 0 10 z" />
-              </marker>
-
-              <rect x="60" y="0" width="180" height="90" stroke="black" fill="transparent" stroke-width="3"/>
-
-              <line x1="0" x2="60" y1="45" y2="45" stroke="red" stroke-width="5" marker-end="url(#arrow)"/>
-              <line x1="240" x2="300" y1="45" y2="45" stroke="red" stroke-width="5" marker-end="url(#arrow)"/>
-
-              <foreignObject x="0" y="0" width="200" height="200">
-                <div xmlns="http://www.w3.org/1999/xhtml">\(I_0\)</div>
-              </foreignObject>
-            </svg>
-
             <p>
               \(I = \ln(1 - \beta^e \d{x}) I_0\), donc \(\ln\par{\frac{I}{I_0}} = \ln(1 - \beta^e \d{x}) = -\beta^e \d{x}\).
             </p>
 
             <!-- Autre schéma -->
+            <img src="resources/sky-schema-1.png" class="responsive-img"/>
 
             <p>
               Lorsque le rayon traverse une portion longue, son intensité \(I\) est réduite par chaque couche d'épaisseur \(\d{x}\) : \( \ln\par{\frac{I(x+\d{x})}{I(x)}} = -\beta^e \d{x} \). <br/>
@@ -79,7 +64,8 @@
         <div class="card">
           <div class="card-content">
             <span class="card-title">Déviation des rayons</span>
-
+            <img src="resources/sky-schema-2.png" style="max-width:70%; margin:auto; display:block"/>
+            On considère un rayon émis par la caméra \(C\) et dirigé vers le ciel. En l'absence de dispersion, le pixel correspondant à ce rayon devrait être noir. Pour prendre en compte de la dispersion, on intègre
           </div>
         </div>
 
