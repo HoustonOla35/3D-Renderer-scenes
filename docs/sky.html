@@ -32,7 +32,7 @@
           <div class="card-content">
             <span class="card-title">Introduction</span>
             <p>
-              L'objectif est de simuler d'une manière physiquement réaliste l'apparence du ciel sur Terre en journée et au coucher du soleil. Pour cela, on modélisera le trajet de la lumière venant du soleil à travers l'atmosphère en prenant en compte l'atténuation et la déviation des rayons lumineux.
+              L'objectif est de simuler d'une manière physiquement réaliste l'apparence du ciel sur Terre en journée et au coucher du soleil. Pour cela, on simulera le trajet de la lumière venant du soleil à travers l'atmosphère en prenant en compte l'atténuation et la déviation des rayons lumineux.
             </p>
           </div>
         </div>
@@ -53,10 +53,10 @@
 
             <p>
               Lorsque le rayon traverse une portion longue, son intensité \(I\) est réduite par chaque couche d'épaisseur \(\d{x}\) : \( \ln\par{\frac{I(x+\d{x})}{I(x)}} = -\beta^e \d{x} \). <br/>
-              Ainsi, \( \ln\par{\frac{I(x_2)}{I(x_1)}} = -\int_{x_1}^{x_2} \beta^e(x)\d{x} \), donc \(I(x_2) = \exp\par{-\int_{x_1}^{x_2} \beta^e(x)\d{x}}\).<br/>
+              Ainsi, \( \ln\par{\frac{I(x_2)}{I(x_1)}} = -\int_{x_1}^{x_2} \beta^e(x)\d{x} \), donc \(I(x_2) = \exp\par{-\int_{x_1}^{x_2} \beta^e(x)\d{x}} I(x_1)\).<br/>
               En notant \(T(x_1, x_2) = \exp\par{-\int_{x_1}^{x_2} \beta^e(x)\d{x}}\) le coefficient de transmission du point d'abscisse \(x_1\) vers le point d'abscisse \(x_2\), on obtient finalement :
               \[ I(x_2) = T(x_1, x_2) I(x_1) \]
-              Cette formule permet d'évaluer numériquement l'intensité perdue par le rayon lorsque celui-ci traverse l'atmosphère.
+              Cette formule permet d'évaluer numériquement l'intensité perdue par le rayon lorsqu'il traverse l'atmosphère.
             </p>
           </div>
         </div>
@@ -65,7 +65,13 @@
           <div class="card-content">
             <span class="card-title">Déviation des rayons</span>
             <img src="resources/sky-schema-2.png" style="max-width:70%; margin:auto; display:block"/>
-            On considère un rayon émis par la caméra \(C\) et dirigé vers le ciel. En l'absence de dispersion, le pixel correspondant à ce rayon devrait être noir. Pour prendre en compte de la dispersion, on intègre
+            <p>
+              On considère un rayon \(R\) émis par la caméra \(C\) et dirigé vers le ciel.
+              L'intensité de ce rayon est obtenue en ajoutant, pour chaque point \(M\) appartenant au rayon, l'intensité transmise par un rayon venant du soleil en \(M\) selon la formule :
+              \[I = \int_{M \in R} I_{\text{soleil}} \: T(\text{soleil},M) \: \beta^s(M) \: P(\theta) \: T(M,C) \d{l}\]
+              \(\beta^s(M)\) est le coefficient de dispersion du milieu en \(M\).
+              \(P(\theta)\) permet de prendre en compte le fait que la lumière ne se disperse pas nécessairement uniformément dans toutes les directions.
+            </p>
           </div>
         </div>
 
@@ -73,7 +79,7 @@
           <div class="card-content">
             <span class="card-title">Pression en fonction de l'altitude</span>
             <p>
-              On cherche ici à calculer la pression \(P(h)\) de l'air à une altitude \(h\). On note \(P_0 = P(0)\) la pression au niveau de la mer, \(M\) la masse molaire de l'air, \(T_0 = 273 \mathrm K\) la température de l'air supposée constante, \(R\) la constante des gaz parfaits. On considère une couche d'air d'épaisseur \(\d{h}\) et de surface \(S\) en équilibre à une hauteur \(h\). On note \(m\) sa masse et \(n\) la quantité de matière qu'elle contient. D'après la loi des gaz parfaits, \(P S\d{h} = nRT_0\), donc \(m = Mn = M \frac{P(h) S\d{h}}{RT_0}\). La couche d'air est soumise à trois forces :
+              On cherche ici à calculer la pression \(P(h)\) de l'air à une altitude \(h\). On note \(P_0 = P(0)\) la pression au niveau de la mer, \(M\) la masse molaire de l'air, \(T_0 = 273 \: \mathrm K\) la température de l'air supposée constante et \(R\) la constante des gaz parfaits. On considère une couche d'air d'épaisseur \(\d{h}\) et de surface \(S\) en équilibre à une hauteur \(h\). On note \(m\) sa masse et \(n\) la quantité de matière qu'elle contient. D'après la loi des gaz parfaits, \(P(h) S\d{h} = nRT_0\), donc \(m = Mn = M \frac{P(h) S\d{h}}{RT_0}\). La couche d'air est soumise à trois forces :
             </p>
             <ul class="browser-default">
               <li class="browser-default">Le poids : \(\vec P = -mg \vec{u_z}\)</li>
@@ -82,10 +88,10 @@
             </ul>
             <p>
               Le principe fondamental de la statique assure que \(\vec P + \vec{F_1} + \vec{F_2} = \vec 0\), donc :
-              \[-M \frac{P(h) S \d{h} g}{R T_0} - (P(h+dh) - P(h))S = 0\]
+              \[-M \frac{P(h) S \d{h} \: g}{R T_0} - (P(h+dh) - P(h))S = 0\]
               Ainsi, \(\frac{Mg}{R T_0}P(h) + \frac{\d{P}}{\d{h}}(h) = 0\), donc \(P(h) = P_0 \exp\par{-\frac{Mg}{R T_0}h}\).
-              Finalement : \[P(h) = P_0 \exp \par{-\frac{h}{h_0}} \text{ avec } h_0 = \frac{R T_0}{Mg} \approx 8000 \mathrm m\].
-              Ce calcul justifie la décroissance des coefficients \(\beta\) donnés dans la partie suivante.
+              Finalement : \[P(h) = P_0 \exp \par{-\frac{h}{h_0}} \text{ avec } h_0 = \frac{R T_0}{Mg} \approx 8000 \mathrm m\]
+              Ce calcul justifie la décroissance exponentielle des coefficients \(\beta_R\) donnés dans la partie suivante.
             </p>
           </div>
         </div>
@@ -97,14 +103,14 @@
         <div class="card">
           <div class="card-content">
             <span class="card-title">Phénomènes de dispersion</span>
-            <p>Pour simuler la propagation des rayons lumineux dans le ciel, on prend en compte deux types de dispersion différents : la dispersion de Rayleigh et la dispersion de Mie</p>
+            <p>Pour simuler la propagation des rayons lumineux dans le ciel, on prend en compte deux types de dispersion différents : la dispersion de Rayleigh et la dispersion de Mie.</p>
 
             <h3>Dispersion de Rayleigh</h3>
-            <p>La dispersion de Rayleigh dépend fortement de la longueur d'onde. Elle permet d'expliquer la couleur du ciel et celle des couchers de soleil.</p>
+            <p>La dispersion de Rayleigh dépend fortement de la longueur d'onde. Elle permet d'expliquer la couleur du ciel et des couchers de soleil.</p>
             <ul class="browser-default">
-              <li>\(\beta_R^s(h,\lambda) = \frac{8 \pi^3 (n^2-1)^2}{3N\lambda^4} e^{-h/H_R}\)</li>
+              <li>\(\beta_R^s(h,\lambda) = \beta_R^s(0,\lambda) e^{-h/H_R}\)</li>
               <li>\(\beta_R^e = \beta_R^s\)</li>
-              <li>\(P_R = \frac{3(1 + \cos(\theta))}{16 \pi}\)</li>
+              <li>\(P_R(\theta) = \frac{3}{16 \pi}(1 + \cos(\theta))\)</li>
             </ul>
             <p>Pour calculer \(\beta_R^s(h,\lambda)\), on prend \(H_R = 8 \: \mathrm{km}\) et on utilise les valeurs tabulées suivantes :</p>
             <table class="highlight">
@@ -112,7 +118,7 @@
                 <tr>
                   <th>Couleur</th>
                   <th>Longueur d'onde \(\lambda\)</th>
-                  <th>Coefficient de dispersion \(\beta_R^s(h,\lambda)\)</th>
+                  <th>Coefficient de dispersion \(\beta_R^s(0,\lambda)\)</th>
                 </tr>
               </thead>
               <tbody>
@@ -139,7 +145,7 @@
             <ul class="browser-default">
               <li>\(\beta_R^s(h,\lambda) = \beta_R^s(0,\lambda) e^{-h/H_M}\)</li>
               <li>\(\beta_M^e = 1.1 \times \beta_M^s\)</li>
-              <li>\(P_M = \frac{3}{8\pi} \times \frac{(1-g^2)(1+\cos^2\theta)}{(2+g^2)(1+g^2-2g\cos\theta)^\frac{3}{2}}\)</li>
+              <li>\(P_M(\theta) = \frac{3}{8\pi} \times \frac{(1-g^2)(1+\cos^2\theta)}{(2+g^2)(1+g^2-2g\cos\theta)^\frac{3}{2}}\)</li>
             </ul>
             On prend \(\beta_R^s(0,\lambda) = 2.1 \times 10^{-5} \: \mathrm{m}^{-1}\), \(H_M = 1.2 \: \mathrm{km}\) et \(g = 0.76\).
           </div>
@@ -148,7 +154,6 @@
         <div class="card">
           <div class="card-content">
             <span class="card-title">Résultats</span>
-            <p>Les images suivantes ont été obtenues avec la méthode décrite précédemment.</p>
           </div>
         </div>
 
