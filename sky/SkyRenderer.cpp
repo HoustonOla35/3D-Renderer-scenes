@@ -42,7 +42,7 @@ inline double betaR(const Vect M, const double wavelength)
 inline double betaM(const Vect M)
 {
     const double h = M.norm() - EARTH_RADIUS;
-    return 2e-5 * exp(-h / 1200.);
+    return 5e-6 * exp(-h / 1200.);
 }
 
 // Transmission coefficient from A to B
@@ -53,7 +53,7 @@ double transmission(const Vect A, const Vect B, const double wavelength)
 
     double integrale = 0;
 
-    const int N = 10;
+    const int N = 30;
     for (int i=0; i<N; i++) {
         const Vect M = A + ((i + .5) / N) * v;
 
@@ -71,7 +71,7 @@ double SkyRenderer::intensity(const Ray &ray, const double wavelength)
 
     double intensity = 0;
 
-    const int N = 10;
+    const int N = 30;
     const double dt = t_max / N;
     for (int i=0; i<N; i++) {
         const Vect M = ray.pos() + (i + .5)*dt * ray.dir();
@@ -87,7 +87,7 @@ double SkyRenderer::intensity(const Ray &ray, const double wavelength)
                             / ((2. + g*g) * pow(1. + g*g - 2.*g*cosTheta, 1.5));
         const double coefMie = phaseM * betaM(M);
 
-        intensity += 6e8 / N
+        intensity += 5e8 / N
                    * transmission(M + endAtmosphere.collisionDate(Ray(M, m_toSun)) * m_toSun, M, wavelength)
                    * (coefRayleigh + coefMie)
                    * transmission(M, ray.pos(), wavelength);
