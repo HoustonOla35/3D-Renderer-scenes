@@ -46,11 +46,11 @@ Image* generateImage (const double theta)
 
 int main(int argc, char *argv[])
 {
-#if 1
+#if 0
     QApplication app(argc, argv);
     Stats::init();
 
-    Image *image = generateImage(0.5 * M_PI / 2);
+    Image *image = generateImage(.96 * M_PI / 2);
 
     int r = 0;
     for (int x=0; x<image->width(); x++) {
@@ -66,13 +66,21 @@ int main(int argc, char *argv[])
     Stats::print(std::cout);
 
     showImage(*image);
-    saveImage(*image, "output/day.png");
+    saveImage(*image, "output/output.png");
 
     return app.exec();
 #else
-    const int N = 20;
-    for (int i=0; i<=N; i++) {
-        const double theta = ((double)i/ N) * M_PI / 8 + 3*M_PI/8;
+    const int N = 6*60;
+
+    const double debut = M_PI / 4;
+    const double fin = 0.53 * M_PI;
+
+    const int process = 0;
+    const int begin = process * N / 4;
+    const int end = (process+1) * N / 4;
+
+    for (int i=begin; i<end; i++) {
+        const double theta = debut + ((double)i/ N) * (fin - debut);
         Image *image = generateImage(theta);
 
         std::string filename = std::to_string(i);
