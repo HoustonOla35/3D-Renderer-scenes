@@ -89,4 +89,6 @@ int main(int argc, char *argv[])
         saveImage(*image, filename);
     }
 #endif
+
+    // ffmpeg -framerate 30 -i %04d.png -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4
 }
